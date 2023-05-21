@@ -1,0 +1,236 @@
+HTML
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drink Water</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="heading">
+            <h1>Drink Water</h1>
+            <h3>Our Goal: 4 Liters</h3>
+        </div>
+        <div class="box">
+            <div class="small-glasses">
+                <p class="text">Choose total number of glasses of water that you have drank today</p>
+
+                <div class="glasses">
+                    <div class="glass small-glass">500 ml</div>
+                    <div class="glass small-glass">500 ml</div>
+                    <div class="glass small-glass">500 ml</div>
+                    <div class="glass small-glass">500 ml</div>
+                    <div class="glass small-glass">500 ml</div>
+                    <div class="glass small-glass">500 ml</div>
+                    <div class="glass small-glass">500 ml</div>
+                    <div class="glass small-glass">500 ml</div>
+                </div>
+            </div>
+            <div class="big-glass">
+                <div class="remaining">
+                    <span class="liters"></span>
+                    <span class="rem">Remaining</span>
+                </div>
+
+                <div class="percentage"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+
+</html>
+
+
+
+
+
+CSS
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: skyblue;
+  color: black;
+  height: 100vh;
+}
+
+body,
+.container,
+.box,
+.small-glasses,
+.glasses {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  flex-direction: column;
+  gap: 50px;
+}
+
+.heading {
+  text-align: center;
+}
+
+.box {
+  gap: 50px;
+}
+
+.small-glasses {
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 40px;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+}
+
+h3 {
+  font-weight: 500;
+}
+
+.small-glass {
+  height: 100px;
+  width: 60px;
+  background-color: white;
+  border: 3px solid blue;
+  border-radius: 0 0 50px 50px;
+  font-size: 12px;
+  margin: 10px;
+  text-align: center;
+  line-height: 94px;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+.small-glass.full {
+  background-color: skyblue;
+  color: black;
+}
+
+.glasses {
+  width: 300px;
+  flex-wrap: wrap;
+}
+
+.big-glass {
+  color: blue;
+  background-color: white;
+  border: 3px solid blue;
+  border-radius: 0 0 100px 100px;
+  margin-top: 50px;
+  width: 150px;
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.remaining {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  transition: 0.3s ease;
+}
+
+.remaining .liters {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.remaining .rem {
+  font-size: 15px;
+  margin-top: -8px;
+}
+
+.percentage {
+  background-color: skyblue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 30px;
+  height: 0;
+  transition: 0.3s ease;
+}
+
+.text {
+  margin-bottom: 5px;
+}
+
+
+
+JAVASCRIPT
+
+const smallGlassesEl = document.querySelectorAll('.small-glass')
+const remainingEl = document.querySelector('.remaining')
+const litersEl = document.querySelector('.liters')
+const percentageEl = document.querySelector('.percentage')
+
+// It will operates the percentage and remaining water in the big glass
+function updateBigGlass() {
+    const totalGlasses = smallGlassesEl.length;
+    const fullGlassesEl = document.querySelectorAll('.small-glass.full').length;
+
+    if(fullGlassesEl === 0) {
+        percentageEl.style.visibility = 'hidden'
+        percentageEl.style.height = 0
+    } else {
+        percentageEl.style.visibility = 'visible'
+        percentageEl.style.height = `${fullGlassesEl / totalGlasses * 350}px`
+        percentageEl.innerText = `${fullGlassesEl / totalGlasses * 100}%`
+    }
+
+    if(fullGlassesEl === totalGlasses) {
+        remainingEl.style.visibility = 'hidden'
+        remainingEl.style.height = 0
+    } else {
+        remainingEl.style.visibility = 'visible'
+        litersEl.innerText = `${4 - (500 * fullGlassesEl / 1000)}L`
+    }
+}
+
+// It will call the updateBigGlass function for every click on the small glasses
+smallGlassesEl.forEach((glass, id) => {
+    glass.addEventListener('click', () => {
+        if (id===7 && smallGlassesEl[id].classList.contains("full")){
+            id--;
+        }
+        else if(smallGlassesEl[id].classList.contains('full') && !smallGlassesEl[id].nextElementSibling.classList.contains('full'))
+        {
+            id--;
+        }
+
+    smallGlassesEl.forEach((glass, id2) => {
+        if(id2 <= id) {
+            glass.classList.add('full')
+        } else {
+            glass.classList.remove('full')
+        }
+    })
+    updateBigGlass();
+    })
+})
+
+updateBigGlass();
